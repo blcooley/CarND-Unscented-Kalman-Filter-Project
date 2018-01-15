@@ -107,16 +107,32 @@ void UKF::Prediction(double delta_t) {
   // Predict mean and covariance
 }
 
-void UKF::GenerateSigmaPoints() {
+MatrixXd UKF::GenerateSigmaPoints() {
+  int n_x = x_.size();
+  int lambda = 3 - n_x;
+  int coef = sqrt(lambda + n_x);
+
+  MatrixXd Xsig = MatrixXd(n_x, 2 * n_x + 1);
+  MatrixXd A = P_.llt().matrixL();
+
+  Xsig.col(0) = x_;
+  
+  for (int i = 0; i < A.cols(); i++) {
+    X_sig.col(i + 1) = x_ + coef * A.col(i);
+    X_sig.col(n_x + i + 1) = x_ - coef * A.col(i);
+  }
+  
+  return Xsig;
+}
+
+/*
   double px = x_(0);
   double py = x_(1);
   double v = x_(2);
   double yaw = x_(3);
   double dyaw = x_(4);
 
-  VectorXd x(5);
-  
-  if (dyaw > 0.00001) {
+ if (dyaw > 0.00001) {
     x(0) = v / dyaw * (sin(yaw + dyaw * delta_t) - sin(yaw));
     x(1) = v / dyaw * (-cos(yaw + dyaw * delta_t) + cos(yaw));
   } else {
@@ -127,8 +143,7 @@ void UKF::GenerateSigmaPoints() {
   x(3) = dyaw * delta_t;
   x(4) = dyaw;
 
-  return x;
-}
+*/
 
 /**
  * Updates the state and the state covariance matrix using a laser measurement.
