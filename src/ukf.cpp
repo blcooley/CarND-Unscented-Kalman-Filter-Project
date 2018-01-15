@@ -54,6 +54,14 @@ UKF::UKF() {
 
   Hint: one or more values initialized above might be wildly off...
   */
+  std_a_ = 2;
+  std_yawdd_ = 2;
+
+  P_ << 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 0,
+    0, 0, 1, 0, 0,
+    0, 0, 0, 1, 0,
+    0, 0, 0, 0, 1;
 }
 
 UKF::~UKF() {}
