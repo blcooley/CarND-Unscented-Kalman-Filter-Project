@@ -57,11 +57,6 @@ UKF::UKF() {
   std_a_ = 2;
   std_yawdd_ = 2;
 
-  P_ << 1, 0, 0, 0, 0,
-    0, 1, 0, 0, 0,
-    0, 0, 1, 0, 0,
-    0, 0, 0, 1, 0,
-    0, 0, 0, 0, 1;
 }
 
 UKF::~UKF() {}
@@ -77,6 +72,18 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   Complete this function! Make sure you switch between lidar and radar
   measurements.
   */
+
+  if (!is_initialized_) {
+    // Initialize x_ and P_
+    P_ << 1, 0, 0, 0, 0,
+          0, 1, 0, 0, 0,
+          0, 0, 1, 0, 0,
+          0, 0, 0, 1, 0,
+          0, 0, 0, 0, 1;
+
+  } else {
+    
+  }
 }
 
 /**
@@ -92,22 +99,35 @@ void UKF::Prediction(double delta_t) {
   vector, x_. Predict sigma points, the state, and the state covariance matrix.
   */
 
+  // Generate sigma points (2 * n_x + 1 = 11)
+  // lambda = 3 - n_x = -2
+
+  // Predict sigma points
+
+  // Predict mean and covariance
+}
+
+void UKF::GenerateSigmaPoints() {
   double px = x_(0);
   double py = x_(1);
   double v = x_(2);
   double yaw = x_(3);
   double dyaw = x_(4);
 
+  VectorXd x(5);
+  
   if (dyaw > 0.00001) {
-    x_(0) = v / dyaw * (sin(yaw + dyaw * delta_t) - sin(yaw));
-    x_(1) = v / dyaw * (-cos(yaw + dyaw * delta_t) + cos(yaw));
+    x(0) = v / dyaw * (sin(yaw + dyaw * delta_t) - sin(yaw));
+    x(1) = v / dyaw * (-cos(yaw + dyaw * delta_t) + cos(yaw));
   } else {
-    x_(0) = v * cos(yaw) * delta_t;
-    x_(1) = v * sin(yaw) * delta_t;
+    x(0) = v * cos(yaw) * delta_t;
+    x(1) = v * sin(yaw) * delta_t;
   }
-  x_(2) = v;
-  x_(3) = dyaw * delta_t;
-  x_(4) = dyaw;
+  x(2) = v;
+  x(3) = dyaw * delta_t;
+  x(4) = dyaw;
+
+  return x;
 }
 
 /**
