@@ -91,6 +91,18 @@ void UKF::Prediction(double delta_t) {
   Complete this function! Estimate the object's location. Modify the state
   vector, x_. Predict sigma points, the state, and the state covariance matrix.
   */
+
+  double px = x_(0);
+  double py = x_(1);
+  double v = x_(2);
+  double yaw = x_(3);
+  double dyaw = x_(4);
+  
+  x_(0) = v / dyaw * (sin(yaw + dyaw * delta_t) - sin(yaw));
+  x_(1) = v / dyaw * (-cos(yaw + dyaw * delta_t) + cos(yaw));
+  x_(2) = v;
+  x_(3) = dyaw * delta_t;
+  x_(4) = dyaw;
 }
 
 /**
