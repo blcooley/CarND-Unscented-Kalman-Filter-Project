@@ -97,9 +97,14 @@ void UKF::Prediction(double delta_t) {
   double v = x_(2);
   double yaw = x_(3);
   double dyaw = x_(4);
-  
-  x_(0) = v / dyaw * (sin(yaw + dyaw * delta_t) - sin(yaw));
-  x_(1) = v / dyaw * (-cos(yaw + dyaw * delta_t) + cos(yaw));
+
+  if (dyaw > 0.00001) {
+    x_(0) = v / dyaw * (sin(yaw + dyaw * delta_t) - sin(yaw));
+    x_(1) = v / dyaw * (-cos(yaw + dyaw * delta_t) + cos(yaw));
+  } else {
+    x_(0) = v * cos(yaw) * delta_t;
+    x_(1) = v * sin(yaw) * delta_t;
+  }
   x_(2) = v;
   x_(3) = dyaw * delta_t;
   x_(4) = dyaw;
