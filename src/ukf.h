@@ -55,6 +55,12 @@ public:
   ///* Radar measurement noise standard deviation radius change in m/s
   double std_radrd_ ;
 
+  ///* Measurement covariance matrix for radar
+  MatrixXd Rrad_;
+
+  ///* Measurement covariance matrix for radar
+  MatrixXd Rlid_;
+  
   ///* Weights of sigma points
   VectorXd weights_;
 
@@ -67,7 +73,15 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  ///* previous timestamp
+  long timestamp_;
 
+  ///* Lidar measurement matrix
+  MatrixXd H_;
+
+  ///* n_x_ dim identity matrix
+  MatrixXd I_;
+  
   /**
    * Constructor
    */
@@ -91,6 +105,21 @@ public:
    */
   void Prediction(double delta_t);
 
+  /**
+   * Helper function for generating sigma points
+   */
+  void GenerateSigmaPoints(MatrixXd* X_sig);
+
+  /**
+   * Helper function for passing sigma points through model functions
+   */
+  void PredictSigmaPoints(MatrixXd Xsig_aug, double delta_t, MatrixXd* X_sig_pred);
+
+  /** 
+   * Helper function for computing mean and covariance of predicted points
+   */
+  void PredictMeanAndCovariance(MatrixXd X_sig_pred, VectorXd* x_out, MatrixXd* P_out);
+    
   /**
    * Updates the state and the state covariance matrix using a laser measurement
    * @param meas_package The measurement at k+1
